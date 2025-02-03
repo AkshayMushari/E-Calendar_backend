@@ -1,6 +1,7 @@
 package com.evernorth.ecalender.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     
 //    @Query("SELECT e FROM Employee e WHERE e.managerId = :managerId")
 //    List<Employee> findByManagerId(@Param("managerId") Integer managerId);
-
+//	 Optional Employee
+	 Optional<Employee> findByEmail(String email);
 	 List<Employee> findByManager_Id(Integer managerId);
 	    
 	    // Alternative JPQL implementation

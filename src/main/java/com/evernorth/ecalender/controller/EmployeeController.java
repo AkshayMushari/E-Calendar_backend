@@ -2,6 +2,7 @@ package com.evernorth.ecalender.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.evernorth.ecalender.entity.Employee;
+import com.evernorth.ecalender.entity.LoginRequest;
 import com.evernorth.ecalender.service.EmployeeService;
 
 @RestController
@@ -73,4 +75,32 @@ public class EmployeeController {
         return ResponseEntity.ok(attendance);
     }
 
+	 @PostMapping("/authenticate")
+	 public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+		    boolean isAuthenticated = employeeService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+		    
+		    if (isAuthenticated) {
+		        // Fetch the employee by email to get the role
+		        Optional<Employee> employeeOptional = employeeService.getEmployeeByEmail(loginRequest.getEmail());
+		        
+		        if (employeeOptional.isPresent()) {
+		            Employee employee = employeeOptional.get();
+		            String role = employee.getRole();  // Get the role of the employee
+		            
+		            // Send a response that includes the role information
+		            String roleMessage = "Login successful. Role: " + role;
+		            return ResponseEntity.ok(roleMessage);
+		        } else {
+		            return ResponseEntity.status(401).body("Employee not found");
+		        }
+		    } else {
+		        return ResponseEntity.status(401).body("Invalid email or password");
+		    }
+		}
+//	 @CrossOrigin(origins = "http://localhost:3000")
+	 @PostMapping("/addemployee")
+	    public Employee addEmployee(@RequestBody Employee employee) {
+	        return employeeService.saveEmployee(employee);
+	        
+	    }
 }
